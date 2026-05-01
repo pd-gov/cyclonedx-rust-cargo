@@ -31,6 +31,7 @@ pub(crate) mod metadata;
 pub(crate) mod organization;
 pub(crate) mod property;
 pub(crate) mod service;
+pub(crate) mod service_data;
 pub(crate) mod signature;
 pub(crate) mod tool;
 pub(crate) mod vulnerability;

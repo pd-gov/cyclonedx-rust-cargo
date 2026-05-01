@@ -18,11 +18,11 @@
 
 use cyclonedx_bom_macros::versioned;
 
-#[versioned("1.3", "1.4", "1.5")]
+#[versioned("1.3", "1.4", "1.5", "1.6")]
 pub(crate) mod base {
     use crate::models;
     use crate::models::bom::BomReference;
-    #[versioned("1.5")]
+    #[versioned("1.5", "1.6")]
     use crate::specs::{common::property::Properties, v1_5::licensing::Licensing};
     use crate::xml::{optional_attribute, write_close_tag, write_simple_tag};
     use crate::{
@@ -197,7 +197,7 @@ pub(crate) mod base {
     #[derive(Debug, Deserialize, Serialize, PartialEq)]
     #[serde(rename_all = "camelCase")]
     pub(crate) struct License {
-        #[versioned("1.5")]
+        #[versioned("1.5", "1.6")]
         #[serde(skip_serializing_if = "Option::is_none")]
         bom_ref: Option<String>,
         #[serde(flatten)]
@@ -206,10 +206,10 @@ pub(crate) mod base {
         text: Option<AttachedText>,
         #[serde(skip_serializing_if = "Option::is_none")]
         url: Option<String>,
-        #[versioned("1.5")]
+        #[versioned("1.5", "1.6")]
         #[serde(skip_serializing_if = "Option::is_none")]
         licensing: Option<Licensing>,
-        #[versioned("1.5")]
+        #[versioned("1.5", "1.6")]
         #[serde(skip_serializing_if = "Option::is_none")]
         properties: Option<Properties>,
     }
@@ -217,14 +217,14 @@ pub(crate) mod base {
     impl From<models::license::License> for License {
         fn from(other: models::license::License) -> Self {
             Self {
-                #[versioned("1.5")]
+                #[versioned("1.5", "1.6")]
                 bom_ref: other.bom_ref.map(|b| b.0),
                 license_identifier: other.license_identifier.into(),
                 text: convert_optional(other.text),
                 url: other.url.map(|u| u.to_string()),
-                #[versioned("1.5")]
+                #[versioned("1.5", "1.6")]
                 licensing: convert_optional(other.licensing),
-                #[versioned("1.5")]
+                #[versioned("1.5", "1.6")]
                 properties: convert_optional(other.properties),
             }
         }
@@ -235,18 +235,18 @@ pub(crate) mod base {
             Self {
                 #[versioned("1.3", "1.4")]
                 bom_ref: None,
-                #[versioned("1.5")]
+                #[versioned("1.5", "1.6")]
                 bom_ref: other.bom_ref.map(models::bom::BomReference::new),
                 license_identifier: other.license_identifier.into(),
                 text: convert_optional(other.text),
                 url: other.url.map(Uri),
                 #[versioned("1.3", "1.4")]
                 licensing: None,
-                #[versioned("1.5")]
+                #[versioned("1.5", "1.6")]
                 licensing: convert_optional(other.licensing),
                 #[versioned("1.3", "1.4")]
                 properties: None,
-                #[versioned("1.5")]
+                #[versioned("1.5", "1.6")]
                 properties: convert_optional(other.properties),
             }
         }
@@ -268,9 +268,9 @@ pub(crate) mod base {
             #[versioned("1.3", "1.4")]
             let start_tag = xml::writer::XmlEvent::start_element(LICENSE_TAG);
 
-            #[versioned("1.5")]
+            #[versioned("1.5", "1.6")]
             let mut start_tag = xml::writer::XmlEvent::start_element(LICENSE_TAG);
-            #[versioned("1.5")]
+            #[versioned("1.5", "1.6")]
             if let Some(bom_ref) = &self.bom_ref {
                 start_tag = start_tag.attr(BOM_REF_ATTR, bom_ref);
             }
@@ -289,7 +289,7 @@ pub(crate) mod base {
                 write_simple_tag(writer, URL_TAG, url)?;
             }
 
-            #[versioned("1.5")]
+            #[versioned("1.5", "1.6")]
             if let Some(properties) = &self.properties {
                 properties.write_xml_element(writer)?;
             }
@@ -311,14 +311,14 @@ pub(crate) mod base {
         where
             Self: Sized,
         {
-            #[versioned("1.5")]
+            #[versioned("1.5", "1.6")]
             let bom_ref = optional_attribute(attributes, BOM_REF_ATTR);
             let mut license_identifier: Option<LicenseIdentifier> = None;
             let mut text: Option<AttachedText> = None;
             let mut url: Option<String> = None;
-            #[versioned("1.5")]
+            #[versioned("1.5", "1.6")]
             let mut licensing: Option<Licensing> = None;
-            #[versioned("1.5")]
+            #[versioned("1.5", "1.6")]
             let mut properties: Option<Properties> = None;
 
             let mut got_end_tag = false;
@@ -397,14 +397,14 @@ pub(crate) mod base {
                 })?;
 
             Ok(Self {
-                #[versioned("1.5")]
+                #[versioned("1.5", "1.6")]
                 bom_ref,
                 license_identifier,
                 text,
                 url,
-                #[versioned("1.5")]
+                #[versioned("1.5", "1.6")]
                 licensing,
-                #[versioned("1.5")]
+                #[versioned("1.5", "1.6")]
                 properties,
             })
         }
@@ -592,6 +592,13 @@ pub(crate) mod base {
             v1_5::licensing::test::{corresponding_licensing, example_licensing},
         };
 
+
+        #[versioned("1.6")]
+        use crate::specs::{
+            common::property::test::{corresponding_properties, example_properties},
+            v1_6::licensing::test::{corresponding_licensing, example_licensing},
+        };
+
         use crate::{
             external_models::spdx::SpdxExpression,
             specs::common::attached_text::test::{
@@ -617,7 +624,7 @@ pub(crate) mod base {
             })
         }
 
-        #[versioned("1.5")]
+        #[versioned("1.5", "1.6")]
         pub(crate) fn example_spdx_license() -> LicenseChoice {
             LicenseChoice::License(License {
                 bom_ref: Some("license-id".to_string()),
@@ -668,7 +675,7 @@ pub(crate) mod base {
             })
         }
 
-        #[versioned("1.5")]
+        #[versioned("1.5", "1.6")]
         pub(crate) fn example_named_license() -> LicenseChoice {
             LicenseChoice::License(License {
                 bom_ref: Some("license-1".to_string()),
